@@ -1,0 +1,11 @@
+const express = require('express');
+const auditLogsController = require('./audit-logs.controller');
+const authenticate = require('../../middleware/auth.middleware');
+const authorize = require('../../middleware/role.middleware');
+
+const router = express.Router();
+
+router.get('/', authenticate, authorize(['admin']), auditLogsController.findAll);
+router.get('/:id', authenticate, authorize(['admin']), auditLogsController.findById);
+
+module.exports = router;
