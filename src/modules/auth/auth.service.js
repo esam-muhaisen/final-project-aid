@@ -5,6 +5,7 @@ const prisma = require("../../config/db");
 const authRepository = require("./auth.repository");
 const usersRepository = require("../users/users.repository");
 const beneficiariesRepository = require("../beneficiaries/beneficiaries.repository");
+const organizationsRepository = require("../organizations/organizations.repository");
 const { logAuditAction } = require("../../shared/audit");
 
 const generateAccessToken = (user) => {
@@ -37,15 +38,15 @@ const login = async (email, password) => {
   const accessToken = generateAccessToken(user);
   const refreshToken = generateRefreshToken(user);
 
-  await authRepository.addRefreshToken(refreshToken);
-  await logAuditAction(user.id, "Login", "users", user.id);
-
-  let beneficiary = null;
+  // Build extras based on user role
+  const extras = {};
   if (user.role === "beneficiary") {
-    beneficiary = await beneficiariesRepository.findByUserId(user.id);
+    extras.beneficiary = await beneficiariesRepository.findByUserId(user.id);
+  } else if (user.role === "local_org") {
+    extras.organization = await organizationsRepository.findByUserId(user.id);
   }
 
-  return { user, beneficiary, accessToken, refreshToken };
+  return { user, ...extras, accessToken, refreshToken };
 };
 
 const logout = async (refreshToken) => {
