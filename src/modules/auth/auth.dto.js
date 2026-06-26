@@ -1,8 +1,7 @@
-const formatLoginResponse = (user, extras = {}, accessToken, refreshToken) => {
+const formatLoginResponse = (user, accessToken, refreshToken) => {
   const { password, ...userWithoutPassword } = user;
   return {
     user: userWithoutPassword,
-    ...extras,
     accessToken,
     refreshToken,
   };

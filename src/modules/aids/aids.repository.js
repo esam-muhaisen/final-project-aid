@@ -14,7 +14,7 @@ const findAll = async () => {
           aid_categories: true,
         },
       },
-      donors: {
+      local_organizations: {
         include: {
           users: true,
         },
@@ -33,7 +33,7 @@ const findById = async (id) => {
           aid_categories: true,
         },
       },
-      donors: {
+      local_organizations: {
         include: {
           users: true,
         },

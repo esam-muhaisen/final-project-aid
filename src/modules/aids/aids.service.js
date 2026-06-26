@@ -1,14 +1,14 @@
 const aidsRepository = require("./aids.repository");
 const aidTypesService = require("../aid-types/aid-types.service");
-const donorsRepository = require("../donors/donors.repository");
+const organizationsRepository = require("../organizations/organizations.repository");
 
 const create = async (data) => {
   await aidTypesService.findById(data.aid_type_id);
 
-  if (data.donor_id) {
-    const donor = await donorsRepository.findById(data.donor_id);
-    if (!donor) {
-      const error = new Error("Donor not found");
+  if (data.org_id) {
+    const org = await organizationsRepository.findById(data.org_id);
+    if (!org) {
+      const error = new Error("Organization not found");
       error.status = 400;
       throw error;
     }
@@ -61,10 +61,10 @@ const update = async (id, data) => {
     await aidTypesService.findById(data.aid_type_id);
   }
 
-  if (data.donor_id) {
-    const donor = await donorsRepository.findById(data.donor_id);
-    if (!donor) {
-      const error = new Error("Donor not found");
+  if (data.org_id) {
+    const org = await organizationsRepository.findById(data.org_id);
+    if (!org) {
+      const error = new Error("Organization not found");
       error.status = 400;
       throw error;
     }

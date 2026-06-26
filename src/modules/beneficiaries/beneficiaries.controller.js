@@ -5,8 +5,7 @@ const create = async (req, res, next) => {
   try {
     const actorId = req.user ? req.user.id : null;
     const beneficiary = await beneficiariesService.create(req.body, actorId);
-    // Return both beneficiary id and formatted response (without password)
-    res.status(201).json({ beneficiaryId: beneficiary.id, ...formatBeneficiaryResponse(beneficiary) });
+    res.status(201).json(formatBeneficiaryResponse(beneficiary));
   } catch (error) {
     next(error);
   }
