@@ -49,6 +49,7 @@ const create = async (data, actorId) => {
     patients_count: data.patients_count,
     disabled_count: data.disabled_count,
     is_displaced: data.is_displaced,
+    release_date: new Date(data.release_date),
     priority_score: score,
     status: "pending",
   };
@@ -101,13 +102,17 @@ const update = async (id, data, actorId) => {
     userData.password = await bcrypt.hash(data.password, 10);
   }
 
-  const beneficiaryFields = ["national_id", "area_id", "family_size", "income", "patients_count", "disabled_count", "is_displaced", "status"];
+  const beneficiaryFields = ["national_id", "area_id", "family_size", "income", "patients_count", "disabled_count", "is_displaced", "status", "release_date"];
   const beneficiaryData = {};
   let recalculateScore = false;
 
   for (const field of beneficiaryFields) {
     if (data[field] !== undefined) {
-      beneficiaryData[field] = data[field];
+      if (field === "release_date") {
+        beneficiaryData[field] = new Date(data[field]);
+      } else {
+        beneficiaryData[field] = data[field];
+      }
       if (["family_size", "income", "patients_count", "disabled_count", "is_displaced"].includes(field)) {
         recalculateScore = true;
       }

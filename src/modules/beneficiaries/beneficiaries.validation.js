@@ -13,6 +13,7 @@ const createBeneficiarySchema = z.object({
     patients_count: z.coerce.number().min(0).default(0),
     disabled_count: z.coerce.number().min(0).default(0),
     is_displaced: z.boolean().default(false),
+    release_date: z.string().datetime().or(z.string().date()),
   }),
 });
 
@@ -29,6 +30,7 @@ const updateBeneficiarySchema = z.object({
     patients_count: z.coerce.number().min(0).optional(),
     disabled_count: z.coerce.number().min(0).optional(),
     is_displaced: z.boolean().optional(),
+    release_date: z.string().datetime().or(z.string().date()).optional(),
     status: z.enum(["pending", "eligible", "not_eligible"]).optional(),
   }),
 });
