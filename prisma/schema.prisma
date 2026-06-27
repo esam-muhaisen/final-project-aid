@@ -16,12 +16,13 @@ model aid_categories {
 
 
 model aid_types {
-  id             Int            @id @default(autoincrement())
-  category_id    Int
-  name           String         @db.VarChar(120)
-  unit           String?        @default("item") @db.VarChar(30)
-  aid_categories aid_categories @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "aid_types_ibfk_1")
-  aids           aids[]
+  id                 Int                  @id @default(autoincrement())
+  category_id        Int
+  name               String               @db.VarChar(120)
+  unit               String?              @default("item") @db.VarChar(30)
+  aid_categories     aid_categories       @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "aid_types_ibfk_1")
+  aids               aids[]
+  beneficiary_orders beneficiary_orders[]
 
   @@index([category_id], map: "category_id")
 }
@@ -65,6 +66,20 @@ model pickup_locations {
   @@index([area_id], map: "area_id")
 }
 
+model beneficiary_orders {
+  id             Int                      @id @default(autoincrement())
+  beneficiary_id Int
+  aid_type_id    Int
+  description    String?                  @db.Text
+  status         beneficiary_orders_status? @default(pending)
+  created_at     DateTime                 @default(now()) @db.Timestamp(0)
+  beneficiaries  beneficiaries            @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_orders_ibfk_1")
+  aid_types      aid_types                @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "beneficiary_orders_ibfk_2")
+
+  @@index([beneficiary_id], map: "beneficiary_id")
+  @@index([aid_type_id], map: "aid_type_id")
+}
+
 model audit_logs {
   id         Int      @id @default(autoincrement())
   user_id    Int?
@@ -94,6 +109,7 @@ model beneficiaries {
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiaries_ibfk_1")
   areas                     areas?                      @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "beneficiaries_ibfk_2")
   beneficiary_verifications beneficiary_verifications[]
+  beneficiary_orders        beneficiary_orders[]
   complaints                complaints[]
   distributions             distributions[]
 
@@ -337,4 +353,10 @@ enum beneficiaries_status {
   pending
   eligible
   not_eligible
+}
+
+enum beneficiary_orders_status {
+  pending
+  approved
+  rejected
 }

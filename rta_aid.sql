@@ -354,3 +354,19 @@ INSERT INTO pickup_locations (area_id, name) VALUES
   -- رفح (areas 14,15)
   (14, 'مركز رفح لإيواء النازحين - نقطة توزيع'),
   (15, 'مخيم تل السلطان - نقطة الاستلام الرئيسية');
+
+-- =====================================================
+-- الجدول 21: beneficiary_orders — طلبات المستفيدين
+-- =====================================================
+CREATE TABLE IF NOT EXISTS beneficiary_orders (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    beneficiary_id INT NOT NULL,
+    aid_type_id    INT NOT NULL,
+    description    TEXT,
+    status         ENUM('pending','approved','rejected') DEFAULT 'pending',
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (beneficiary_id) REFERENCES beneficiaries(id) ON DELETE CASCADE,
+    FOREIGN KEY (aid_type_id) REFERENCES aid_types(id) ON UPDATE RESTRICT,
+    INDEX (beneficiary_id),
+    INDEX (aid_type_id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

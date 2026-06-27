@@ -27,6 +27,7 @@ const auditLogsRouter = require("./modules/audit-logs/audit-logs.routes");
 const syncRouter = require("./modules/sync/sync.routes");
 const testerRouter = require("./modules/tester/tester.routes");
 const pickupLocationsRouter = require("./modules/pickup-locations/pickup-locations.routes");
+const beneficiaryOrdersRouter = require("./modules/beneficiary-orders/beneficiary-orders.routes");
 
 
 const app = express();
@@ -61,6 +62,7 @@ app.use("/tester", testerRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/beneficiaries", beneficiariesRouter);
+app.use("/api/beneficiary-orders", beneficiaryOrdersRouter);
 app.use("/api/donors", donorsRouter);
 app.use("/api/organizations", organizationsRouter);
 app.use("/api/aid-categories", aidCategoriesRouter);
