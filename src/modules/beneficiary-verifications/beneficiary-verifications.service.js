@@ -22,9 +22,9 @@ const create = async (data, userId) => {
 
   // Update beneficiary status based on verification result
   const status = data.result === 'approved' ? 'eligible' : 'not_eligible';
-  await beneficiariesRepository.update(data.beneficiary_id, { status });
+  await beneficiariesRepository.update(data.beneficiary_id, {}, { status });
 
-  await audit.log('verify_beneficiary', 'beneficiary_verifications', verification.id);
+  await audit.logAuditAction(userId, 'verify_beneficiary', 'beneficiary_verifications', verification.id);
   return verification;
 };
 
@@ -46,7 +46,7 @@ const update = async (id, data) => {
 
   if (data.result) {
     const status = data.result === 'approved' ? 'eligible' : 'not_eligible';
-    await beneficiariesRepository.update(existing.beneficiary_id, { status });
+    await beneficiariesRepository.update(existing.beneficiary_id, {}, { status });
   }
 
   return updated;

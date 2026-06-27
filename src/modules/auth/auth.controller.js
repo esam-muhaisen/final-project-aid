@@ -1,5 +1,5 @@
 const authService = require("./auth.service");
-const { formatLoginResponse } = require("./auth.dto");
+const { formatLoginResponse, formatBeneficiaryLoginResponse } = require("./auth.dto");
 
 const login = async (req, res, next) => {
   try {
@@ -43,9 +43,20 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const loginBeneficiary = async (req, res, next) => {
+  try {
+    const { national_id, release_date } = req.body;
+    const result = await authService.loginBeneficiary(national_id, release_date);
+    res.json(formatBeneficiaryLoginResponse(result.user, result.beneficiary, result.accessToken, result.refreshToken));
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   login,
   logout,
   refresh,
   changePassword,
+  loginBeneficiary,
 };

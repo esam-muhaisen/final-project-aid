@@ -51,8 +51,18 @@ model areas {
   governorates        governorates          @relation(fields: [governorate_id], references: [id], onUpdate: Restrict, map: "areas_ibfk_1")
   beneficiaries       beneficiaries[]
   local_organizations local_organizations[]
+  pickup_locations    pickup_locations[]
 
   @@index([governorate_id], map: "governorate_id")
+}
+
+model pickup_locations {
+  id      Int     @id @default(autoincrement())
+  area_id Int
+  name    String  @db.VarChar(200)
+  areas   areas   @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "pickup_locations_ibfk_1")
+
+  @@index([area_id], map: "area_id")
 }
 
 model audit_logs {

@@ -26,6 +26,7 @@ const reportsRouter = require("./modules/reports/reports.routes");
 const auditLogsRouter = require("./modules/audit-logs/audit-logs.routes");
 const syncRouter = require("./modules/sync/sync.routes");
 const testerRouter = require("./modules/tester/tester.routes");
+const pickupLocationsRouter = require("./modules/pickup-locations/pickup-locations.routes");
 
 
 const app = express();
@@ -67,6 +68,7 @@ app.use("/api/aid-types", aidTypesRouter);
 app.use("/api/aids", aidsRouter); 
 app.use("/api/campaigns", campaignsRouter);
 app.use("/api/distribution-cycles", distributionCyclesRouter);
+app.use("/api/pickup-locations", pickupLocationsRouter);
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date() });
 });

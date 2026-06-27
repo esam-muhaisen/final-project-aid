@@ -105,9 +105,48 @@ const changePassword = async (userId, oldPassword, newPassword) => {
   await logAuditAction(userId, "Password Change", "users", userId);
 };
 
+const loginBeneficiary = async (nationalId, releaseDate) => {
+  const beneficiary = await prisma.beneficiaries.findUnique({
+    where: { national_id: nationalId },
+    include: {
+      users: true,
+    },
+  });
+
+  if (!beneficiary) {
+    const error = new Error("Invalid credentials");
+    error.status = 401;
+    throw error;
+  }
+
+  const dbDateStr = beneficiary.release_date.toISOString().split("T")[0];
+  const inputDateStr = new Date(releaseDate).toISOString().split("T")[0];
+  if (dbDateStr !== inputDateStr) {
+    const error = new Error("Invalid credentials");
+    error.status = 401;
+    throw error;
+  }
+
+  const user = beneficiary.users;
+  if (!user || !user.is_active) {
+    const error = new Error("User inactive or not found");
+    error.status = 401;
+    throw error;
+  }
+
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  await authRepository.addRefreshToken(refreshToken);
+  await logAuditAction(user.id, "Beneficiary Login", "users", user.id);
+
+  return { user, beneficiary, accessToken, refreshToken };
+};
+
 module.exports = {
   login,
   logout,
   refresh,
   changePassword,
+  loginBeneficiary,
 };

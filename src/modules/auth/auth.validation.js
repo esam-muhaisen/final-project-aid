@@ -20,8 +20,16 @@ const changePasswordSchema = z.object({
   }),
 });
 
+const beneficiaryLoginSchema = z.object({
+  body: z.object({
+    national_id: z.string().min(5).max(20),
+    release_date: z.string().datetime().or(z.string().date()),
+  }),
+});
+
 module.exports = {
   loginSchema,
   refreshTokenSchema,
   changePasswordSchema,
+  beneficiaryLoginSchema,
 };
