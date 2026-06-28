@@ -23,6 +23,7 @@ model aid_types {
   aid_categories     aid_categories       @relation(fields: [category_id], references: [id], onUpdate: Restrict, map: "aid_types_ibfk_1")
   aids               aids[]
   beneficiary_orders beneficiary_orders[]
+  beneficiary_aids   beneficiary_aids[]
 
   @@index([category_id], map: "category_id")
 }
@@ -58,23 +59,25 @@ model areas {
 }
 
 model pickup_locations {
-  id      Int     @id @default(autoincrement())
-  area_id Int
-  name    String  @db.VarChar(200)
-  areas   areas   @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "pickup_locations_ibfk_1")
+  id               Int                @id @default(autoincrement())
+  area_id          Int
+  name             String             @db.VarChar(200)
+  areas            areas              @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "pickup_locations_ibfk_1")
+  beneficiary_aids beneficiary_aids[]
 
   @@index([area_id], map: "area_id")
 }
 
 model beneficiary_orders {
-  id             Int                      @id @default(autoincrement())
-  beneficiary_id Int
-  aid_type_id    Int
-  description    String?                  @db.Text
-  status         beneficiary_orders_status? @default(pending)
-  created_at     DateTime                 @default(now()) @db.Timestamp(0)
-  beneficiaries  beneficiaries            @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_orders_ibfk_1")
-  aid_types      aid_types                @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "beneficiary_orders_ibfk_2")
+  id               Int                        @id @default(autoincrement())
+  beneficiary_id   Int
+  aid_type_id      Int
+  description      String?                    @db.Text
+  status           beneficiary_orders_status? @default(pending)
+  created_at       DateTime                   @default(now()) @db.Timestamp(0)
+  beneficiaries    beneficiaries              @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_orders_ibfk_1")
+  aid_types        aid_types                  @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "beneficiary_orders_ibfk_2")
+  beneficiary_aids beneficiary_aids?
 
   @@index([beneficiary_id], map: "beneficiary_id")
   @@index([aid_type_id], map: "aid_type_id")
@@ -110,6 +113,7 @@ model beneficiaries {
   areas                     areas?                      @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "beneficiaries_ibfk_2")
   beneficiary_verifications beneficiary_verifications[]
   beneficiary_orders        beneficiary_orders[]
+  beneficiary_aids          beneficiary_aids[]
   complaints                complaints[]
   distributions             distributions[]
 
@@ -244,6 +248,7 @@ model local_organizations {
   aids                      aids[]
   beneficiary_verifications beneficiary_verifications[]
   distributions             distributions[]
+  beneficiary_aids          beneficiary_aids[]
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "local_organizations_ibfk_1")
   areas                     areas?                      @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "local_organizations_ibfk_2")
 
@@ -359,4 +364,35 @@ enum beneficiary_orders_status {
   pending
   approved
   rejected
+}
+
+model beneficiary_aids {
+  id                 Int                      @id @default(autoincrement())
+  beneficiary_id     Int
+  aid_type_id        Int
+  pickup_location_id Int?
+  org_id             Int
+  order_id           Int?                     @unique(map: "beneficiary_aids_order_id_unique")
+  status             beneficiary_aids_status
+  created_at         DateTime                 @default(now()) @db.Timestamp(0)
+  updated_at         DateTime                 @default(now()) @updatedAt @db.Timestamp(0)
+
+  beneficiaries       beneficiaries       @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_aids_ibfk_1")
+  aid_types           aid_types           @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_2")
+  pickup_locations    pickup_locations?   @relation(fields: [pickup_location_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_3")
+  local_organizations local_organizations @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_4")
+  beneficiary_orders  beneficiary_orders? @relation(fields: [order_id], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "beneficiary_aids_ibfk_5")
+
+  @@index([beneficiary_id], map: "beneficiary_id")
+  @@index([aid_type_id], map: "aid_type_id")
+  @@index([pickup_location_id], map: "pickup_location_id")
+  @@index([org_id], map: "org_id")
+}
+
+enum beneficiary_aids_status {
+  rejected
+  approved
+  preparing
+  shipping
+  delivered
 }

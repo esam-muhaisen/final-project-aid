@@ -369,4 +369,29 @@ CREATE TABLE IF NOT EXISTS beneficiary_orders (
     FOREIGN KEY (aid_type_id) REFERENCES aid_types(id) ON UPDATE RESTRICT,
     INDEX (beneficiary_id),
     INDEX (aid_type_id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- =====================================================
+-- الجدول 22: beneficiary_aids — مساعدات المستفيدين
+-- =====================================================
+CREATE TABLE IF NOT EXISTS beneficiary_aids (
+    id                 INT AUTO_INCREMENT PRIMARY KEY,
+    beneficiary_id     INT NOT NULL,
+    aid_type_id        INT NOT NULL,
+    pickup_location_id INT NULL,
+    org_id             INT NOT NULL,
+    order_id           INT NULL UNIQUE,
+    status             ENUM('rejected', 'approved', 'preparing', 'shipping', 'delivered') NOT NULL,
+    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (beneficiary_id) REFERENCES beneficiaries(id) ON DELETE CASCADE,
+    FOREIGN KEY (aid_type_id) REFERENCES aid_types(id) ON UPDATE RESTRICT,
+    FOREIGN KEY (pickup_location_id) REFERENCES pickup_locations(id) ON UPDATE RESTRICT,
+    FOREIGN KEY (org_id) REFERENCES local_organizations(id) ON UPDATE RESTRICT,
+    FOREIGN KEY (order_id) REFERENCES beneficiary_orders(id) ON DELETE SET NULL,
+    INDEX (beneficiary_id),
+    INDEX (aid_type_id),
+    INDEX (pickup_location_id),
+    INDEX (org_id),
+    INDEX (order_id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

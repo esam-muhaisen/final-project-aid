@@ -27,12 +27,54 @@ const  findById = async (id) => {
   return order;
 };
 
-const update = async (id, data) => {
-  await findById(id);
+const organizationsRepository = require("../organizations/organizations.repository");
+const pickupLocationsService = require("../pickup-locations/pickup-locations.service");
+
+const update = async (id, data, actor) => {
+  const order = await findById(id);
   if (data.aid_type_id) {
     await aidTypesService.findById(data.aid_type_id);
   }
-  return beneficiaryOrdersRepository.update(id, data);
+
+  let orgId = null;
+  let pickupLocationId = null;
+
+  if (data.status !== undefined && data.status !== order.status) {
+    if (order.status !== "pending") {
+      const error = new Error("Order status cannot be changed once it is approved or rejected");
+      error.status = 400;
+      throw error;
+    }
+
+    if (data.status === "approved" || data.status === "rejected") {
+      if (!actor || actor.role !== "local_org") {
+        const error = new Error("Access denied: Only local organizations can update order status");
+        error.status = 403;
+        throw error;
+      }
+
+      const org = await organizationsRepository.findByUserId(actor.id);
+      if (!org) {
+        const error = new Error("Local organization profile not found for this user");
+        error.status = 404;
+        throw error;
+      }
+      orgId = org.id;
+
+      if (data.status === "approved") {
+        if (!data.pickup_location_id) {
+          const error = new Error("pickup_location_id is required when approving an order");
+          error.status = 400;
+          throw error;
+        }
+        await pickupLocationsService.findById(data.pickup_location_id);
+        pickupLocationId = data.pickup_location_id;
+      }
+    }
+  }
+
+  const { pickup_location_id, ...orderData } = data;
+  return beneficiaryOrdersRepository.update(id, orderData, orgId, pickupLocationId);
 };
 
 const deleteOrder = async (id) => {

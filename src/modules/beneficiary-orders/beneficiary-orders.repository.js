@@ -38,8 +38,35 @@ const findById = async (id) => {
   });
 };
 
-const update = async (id, data) => {
+const update = async (id, data, orgId, pickupLocationId) => {
   const { id: _id, beneficiary_id, ...allowedData } = data;
+
+  if (orgId && (allowedData.status === "approved" || allowedData.status === "rejected")) {
+    return prisma.$transaction(async (tx) => {
+      const updatedOrder = await tx.beneficiary_orders.update({
+        where: { id: parseInt(id) },
+        data: allowedData,
+        include: {
+          beneficiaries: { include: { users: true } },
+          aid_types: true,
+        },
+      });
+
+      await tx.beneficiary_aids.create({
+        data: {
+          beneficiary_id: updatedOrder.beneficiary_id,
+          aid_type_id: updatedOrder.aid_type_id,
+          pickup_location_id: pickupLocationId ? parseInt(pickupLocationId) : null,
+          org_id: parseInt(orgId),
+          order_id: updatedOrder.id,
+          status: allowedData.status === "approved" ? "approved" : "rejected",
+        },
+      });
+
+      return updatedOrder;
+    });
+  }
+
   return prisma.beneficiary_orders.update({
     where: { id: parseInt(id) },
     data: allowedData,

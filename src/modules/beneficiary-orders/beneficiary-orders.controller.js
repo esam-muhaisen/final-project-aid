@@ -70,7 +70,14 @@ const update = async (req, res, next) => {
         return res.status(403).json({ error: "Access denied: Beneficiaries cannot update order status" });
       }
     }
-    const updated = await beneficiaryOrdersService.update(req.params.id, req.body);
+
+    if (req.body.status !== undefined && req.body.status !== order.status) {
+      if (req.user.role !== "local_org") {
+        return res.status(403).json({ error: "Access denied: Only local organizations can update order status" });
+      }
+    }
+
+    const updated = await beneficiaryOrdersService.update(req.params.id, req.body, req.user);
     res.json(formatBeneficiaryOrderResponse(updated));
   } catch (err) {
     next(err);

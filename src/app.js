@@ -28,6 +28,7 @@ const syncRouter = require("./modules/sync/sync.routes");
 const testerRouter = require("./modules/tester/tester.routes");
 const pickupLocationsRouter = require("./modules/pickup-locations/pickup-locations.routes");
 const beneficiaryOrdersRouter = require("./modules/beneficiary-orders/beneficiary-orders.routes");
+const beneficiaryAidsRouter = require("./modules/beneficiary-aids/beneficiary-aids.routes");
 
 
 const app = express();
@@ -71,6 +72,7 @@ app.use("/api/aids", aidsRouter);
 app.use("/api/campaigns", campaignsRouter);
 app.use("/api/distribution-cycles", distributionCyclesRouter);
 app.use("/api/pickup-locations", pickupLocationsRouter);
+app.use("/api/beneficiary-aids", beneficiaryAidsRouter);
 app.get("/health", (req, res) => {
   res.json({ status: "healthy", timestamp: new Date() });
 });

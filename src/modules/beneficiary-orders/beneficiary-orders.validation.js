@@ -13,6 +13,7 @@ const updateBeneficiaryOrderSchema = z.object({
     aid_type_id: z.number().int().positive().optional(),
     description: z.string().optional().nullable(),
     status: z.enum(["pending", "approved", "rejected"]).optional(),
+    pickup_location_id: z.number().int().positive().optional().nullable(),
   }),
 });
 
