@@ -5,7 +5,8 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const result = await authService.login(email, password);
-    res.json(formatLoginResponse(result.user, result.accessToken, result.refreshToken));
+    const { beneficiary, organization } = result;
+    res.json(formatLoginResponse(result.user, { beneficiary, organization }, result.accessToken, result.refreshToken));
   } catch (error) {
     next(error);
   }
