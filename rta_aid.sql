@@ -318,16 +318,7 @@ VALUES
 ('Ramadan 2026', 'Food aid distribution during Ramadan', '2026-03-01', '2026-03-31', 'active'),
 ('Emergency Relief May 2026', 'Emergency aid distribution', '2026-05-01', '2026-05-31', 'planned');
 
--- =====================================================
--- الجدول 20: pickup_locations — نقاط الاستلام
--- =====================================================
-CREATE TABLE IF NOT EXISTS pickup_locations (
-    id      INT AUTO_INCREMENT PRIMARY KEY,
-    area_id INT NOT NULL,
-    name    VARCHAR(200) NOT NULL,
-    FOREIGN KEY (area_id) REFERENCES areas(id) ON UPDATE RESTRICT,
-    INDEX (area_id)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 -- البيانات الوهمية لنقاط الاستلام
 INSERT INTO pickup_locations (area_id, name) VALUES
@@ -356,6 +347,18 @@ INSERT INTO pickup_locations (area_id, name) VALUES
   -- رفح (areas 14,15)
   (14, 'مركز رفح لإيواء النازحين - نقطة توزيع'),
   (15, 'مخيم تل السلطان - نقطة الاستلام الرئيسية');
+
+
+  -- =====================================================
+-- الجدول 20: pickup_locations — نقاط الاستلام
+-- =====================================================
+CREATE TABLE IF NOT EXISTS pickup_locations (
+    id      INT AUTO_INCREMENT PRIMARY KEY,
+    area_id INT NOT NULL,
+    name    VARCHAR(200) NOT NULL,
+    FOREIGN KEY (area_id) REFERENCES areas(id) ON UPDATE RESTRICT,
+    INDEX (area_id)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- =====================================================
 -- الجدول 21: beneficiary_orders — طلبات المستفيدين
@@ -396,4 +399,4 @@ CREATE TABLE IF NOT EXISTS beneficiary_aids (
     INDEX (pickup_location_id),
     INDEX (org_id),
     INDEX (order_id)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

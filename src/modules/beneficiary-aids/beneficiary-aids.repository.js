@@ -1,8 +1,7 @@
 const prisma = require("../../config/db");
 
-const findAll = async (where = {}) => {
+const findAll = async () => {
   return prisma.beneficiary_aids.findMany({
-    where,
     include: {
       beneficiaries: { include: { users: true } },
       aid_types: true,
