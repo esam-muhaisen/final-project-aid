@@ -1,7 +1,7 @@
 const formatVerificationResponse = (v) => ({
   id: v.id,
   beneficiary_id: v.beneficiary_id,
-  org_id: v.org_id,
+  verified_by: v.verified_by,
   result: v.result,
   notes: v.notes,
   created_at: v.created_at,

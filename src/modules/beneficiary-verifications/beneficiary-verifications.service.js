@@ -12,7 +12,6 @@ const create = async (data, userId) => {
 
   const payload = {
     beneficiary_id: data.beneficiary_id,
-    org_id: data.org_id || null,
     verified_by: userId,
     result: data.result,
     notes: data.notes

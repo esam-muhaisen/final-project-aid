@@ -5,7 +5,6 @@ const create = async (data) => prisma.beneficiary_verifications.create({ data })
 const findAll = async () => prisma.beneficiary_verifications.findMany({
   include: {
     beneficiaries: true,
-    local_organizations: true,
     users: true
   }
 });
@@ -14,7 +13,6 @@ const findById = async (id) => prisma.beneficiary_verifications.findUnique({
   where: { id: Number(id) },
   include: {
     beneficiaries: true,
-    local_organizations: true,
     users: true
   }
 });

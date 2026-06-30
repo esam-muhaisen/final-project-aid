@@ -27,7 +27,7 @@ const  findById = async (id) => {
   return order;
 };
 
-const organizationsRepository = require("../organizations/organizations.repository");
+const usersRepository = require("../users/users.repository");
 const pickupLocationsService = require("../pickup-locations/pickup-locations.service");
 
 const update = async (id, data, actor) => {
@@ -36,7 +36,7 @@ const update = async (id, data, actor) => {
     await aidTypesService.findById(data.aid_type_id);
   }
 
-  let orgId = null;
+  let uesrId = null;
   let pickupLocationId = null;
 
   if (data.status !== undefined && data.status !== order.status) {
@@ -47,19 +47,19 @@ const update = async (id, data, actor) => {
     }
 
     if (data.status === "approved" || data.status === "rejected") {
-      if (!actor || actor.role !== "local_org") {
-        const error = new Error("Access denied: Only local organizations can update order status");
-        error.status = 403;
-        throw error;
-      }
+      // if (!actor || actor.role !== "local_org") {
+      //   const error = new Error("Access denied: Only local organizations can update order status");
+      //   error.status = 403;
+      //   throw error;
+      // }
 
-      const org = await organizationsRepository.findByUserId(actor.id);
-      if (!org) {
-        const error = new Error("Local organization profile not found for this user");
+      const user = await usersRepository.findById(actor.id);
+      if (!user) {
+        const error = new Error("org or admin profile not found for this user");
         error.status = 404;
         throw error;
       }
-      orgId = org.id;
+      uesrId = user.id;
 
       if (data.status === "approved") {
         if (!data.pickup_location_id) {
@@ -74,7 +74,7 @@ const update = async (id, data, actor) => {
   }
 
   const { pickup_location_id, ...orderData } = data;
-  return beneficiaryOrdersRepository.update(id, orderData, orgId, pickupLocationId);
+  return beneficiaryOrdersRepository.update(id, orderData, uesrId, pickupLocationId);
 };
 
 const deleteOrder = async (id) => {

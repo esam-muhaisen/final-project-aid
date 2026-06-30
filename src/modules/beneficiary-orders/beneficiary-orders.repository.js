@@ -38,10 +38,10 @@ const findById = async (id) => {
   });
 };
 
-const update = async (id, data, orgId, pickupLocationId) => {
+const update = async (id, data, uesrId, pickupLocationId) => {
   const { id: _id, beneficiary_id, ...allowedData } = data;
 
-  if (orgId && (allowedData.status === "approved" || allowedData.status === "rejected")) {
+  if (uesrId && (allowedData.status === "approved" || allowedData.status === "rejected")) {
     return prisma.$transaction(async (tx) => {
       const updatedOrder = await tx.beneficiary_orders.update({
         where: { id: parseInt(id) },
@@ -57,7 +57,7 @@ const update = async (id, data, orgId, pickupLocationId) => {
           beneficiary_id: updatedOrder.beneficiary_id,
           aid_type_id: updatedOrder.aid_type_id,
           pickup_location_id: pickupLocationId ? parseInt(pickupLocationId) : null,
-          org_id: parseInt(orgId),
+          verify_by_user_id	: parseInt(uesrId),
           order_id: updatedOrder.id,
           status: allowedData.status === "approved" ? "approved" : "rejected",
         },

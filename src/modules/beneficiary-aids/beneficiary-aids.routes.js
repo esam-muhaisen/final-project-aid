@@ -24,7 +24,7 @@ router.get(
 router.put(
   "/:id",
   authenticate,
-  authorize(["local_org"]),
+  authorize(["local_org", "admin"]),
   validate(updateBeneficiaryAidSchema),
   controller.update
 );

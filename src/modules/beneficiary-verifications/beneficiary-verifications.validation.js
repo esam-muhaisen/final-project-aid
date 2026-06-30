@@ -2,7 +2,7 @@ const { z } = require('zod');
 const createSchema = z.object({
   body: z.object({
     beneficiary_id: z.number().int().positive(),
-    org_id: z.number().int().positive().nullable().optional(),
+    verified_by: z.number().int().positive().nullable().optional(),
     result: z.enum(['approved', 'rejected']),
     notes: z.string().optional()
   })

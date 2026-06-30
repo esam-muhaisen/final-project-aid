@@ -7,7 +7,7 @@ const findAll = async (where = {}) => {
       beneficiaries: { include: { users: true } },
       aid_types: true,
       pickup_locations: true,
-      local_organizations: { include: { users: true } },
+      users: true,
       beneficiary_orders: true,
     },
     orderBy: { id: "asc" },
@@ -21,7 +21,7 @@ const findById = async (id) => {
       beneficiaries: { include: { users: true } },
       aid_types: true,
       pickup_locations: true,
-      local_organizations: { include: { users: true } },
+      users: true,
       beneficiary_orders: true,
     },
   });
@@ -35,7 +35,7 @@ const update = async (id, data) => {
       beneficiaries: { include: { users: true } },
       aid_types: true,
       pickup_locations: true,
-      local_organizations: { include: { users: true } },
+      users: true,
       beneficiary_orders: true,
     },
   });

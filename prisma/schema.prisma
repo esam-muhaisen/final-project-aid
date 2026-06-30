@@ -244,7 +244,6 @@ model local_organizations {
   is_verified               Boolean?                    @default(false)
   aids                      aids[]
   distributions             distributions[]
-  beneficiary_aids          beneficiary_aids[]
   beneficiary_verifications beneficiary_verifications[]
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "local_organizations_ibfk_1")
   areas                     areas?                      @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "local_organizations_ibfk_2")
@@ -281,6 +280,7 @@ model users {
   donors                    donors?
   local_organizations       local_organizations?
   notifications             notifications[]
+  beneficiary_aids beneficiary_aids[]
 }
 
 enum beneficiary_verifications_result {
@@ -349,7 +349,7 @@ model beneficiary_aids {
   beneficiary_id     Int
   aid_type_id        Int
   pickup_location_id Int?
-  org_id             Int?
+  verify_by_user_id  Int
   order_id           Int?                     @unique(map: "beneficiary_aids_order_id_unique")
   status             beneficiary_aids_status
   created_at         DateTime                 @default(now()) @db.Timestamp(0)
@@ -358,13 +358,13 @@ model beneficiary_aids {
   beneficiaries       beneficiaries       @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_aids_ibfk_1")
   aid_types           aid_types           @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_2")
   pickup_locations    pickup_locations?   @relation(fields: [pickup_location_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_3")
-  local_organizations local_organizations? @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_4")
+  users               users               @relation(fields: [verify_by_user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_aids_ibfk_4")
   beneficiary_orders  beneficiary_orders? @relation(fields: [order_id], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "beneficiary_aids_ibfk_5")
 
   @@index([beneficiary_id], map: "beneficiary_id")
   @@index([aid_type_id], map: "aid_type_id")
   @@index([pickup_location_id], map: "pickup_location_id")
-  @@index([org_id], map: "org_id")
+  @@index([verify_by_user_id], map: "user_id")
 }
 
 enum beneficiary_aids_status {
