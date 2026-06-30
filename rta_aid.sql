@@ -122,6 +122,7 @@ CREATE TABLE aids (
     id                 INT AUTO_INCREMENT PRIMARY KEY,
     aid_type_id        INT NOT NULL,
     donor_id           INT,
+    org_id             INT,
     quantity           INT NOT NULL,
     remaining_quantity INT NOT NULL,
     expiry_date        DATE,
@@ -129,7 +130,8 @@ CREATE TABLE aids (
     batch_code         VARCHAR(50) UNIQUE, -- تم دمج العمود المعدل هنا مباشرة
     created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (aid_type_id) REFERENCES aid_types(id),
-    FOREIGN KEY (donor_id)    REFERENCES donors(id) ON DELETE SET NULL
+    FOREIGN KEY (donor_id)    REFERENCES donors(id) ON DELETE SET NULL,
+    FOREIGN KEY (org_id)      REFERENCES local_organizations(id) ON DELETE SET NULL
 );
 
 -- =====================================================
@@ -198,13 +200,13 @@ CREATE TABLE donation_tracking (
 CREATE TABLE beneficiary_verifications (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     beneficiary_id  INT NOT NULL,
-    org_id          INT NOT NULL,
+    org_id          INT NULL,
     verified_by     INT,
     result          ENUM('approved','rejected') NOT NULL,
     notes           TEXT,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (beneficiary_id) REFERENCES beneficiaries(id) ON DELETE CASCADE,
-    FOREIGN KEY (org_id)         REFERENCES local_organizations(id) ON DELETE CASCADE,
+    FOREIGN KEY (org_id)         REFERENCES local_organizations(id) ON DELETE SET NULL,
     FOREIGN KEY (verified_by)    REFERENCES users(id) ON DELETE SET NULL
 );
 

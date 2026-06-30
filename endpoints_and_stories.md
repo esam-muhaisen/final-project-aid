@@ -363,17 +363,18 @@
 
 #### • تسجيل وصول شحنة مساعدات (Create Aid Stock)
 * **المسار:** `POST /api/aids`
-* **الحماية:** محمي (لـ `admin` أو `donor` فقط)
+* **الحماية:** محمي (لـ `admin` أو `local_org` فقط)
 * **المدخلات المطلوبة:**
 ```json
 {
   "aid_type_id": 1,
-  "donor_id": 1,
+  "org_id": 1,
   "quantity": 1000,
   "expiry_date": "2026-12-31",
   "batch_code": "BATCH-FOOD-01-A"
 }
 ```
+*(ملاحظة: حقل `org_id` اختياري ويمثل الجمعية المستلمة للشحنة، ويمكن أن يكون `null` أو يتم حذفه من الـ Request Body. حقل `batch_code` و `expiry_date` اختياريان أيضاً).*
 
 #### • جلب قائمة المخزون (Get All Aids)
 * **المسار:** `GET /api/aids`
@@ -413,11 +414,12 @@
 ```json
 {
   "beneficiary_id": 1,
-  "org_id": 1,
+  "org_id": null,
   "result": "approved",
   "notes": "تمت الزيارة الميدانية للأسرة وتطابق البيانات الاجتماعية."
 }
 ```
+*(ملاحظة: حقل `org_id` اختياري ويمكن أن يرسل كـ `null` أو يتم حذفه تماماً من الـ Body).*
 *(الـ result المتاح: `approved` أو `rejected`)*
 
 #### • تعديل سجل توثيق (Update Verification)
@@ -470,6 +472,75 @@
   "status": "resolved"
 }
 ```
+
+### 14. المحافظات والمناطق (Governorates & Areas)
+* **المسارات الأساسية:** `/api/governorates` و `/api/areas`
+
+#### • إنشاء محافظة جديدة (Create Governorate)
+* **المسار:** `POST /api/governorates`
+* **الحماية:** محمي (لـ `admin` فقط)
+* **المدخلات المطلوبة:**
+```json
+{
+  "name": "محافظة غزة"
+}
+```
+
+#### • جلب قائمة المحافظات (Get All Governorates)
+* **المسار:** `GET /api/governorates`
+* **الحماية:** محمي (لأي مستخدم مسجل دخول)
+
+#### • جلب محافظة بالـ ID
+* **المسار:** `GET /api/governorates/:id`
+* **الحماية:** محمي (لأي مستخدم مسجل دخول)
+
+#### • تعديل محافظة (Update Governorate)
+* **المسار:** `PUT /api/governorates/:id`
+* **الحماية:** محمي (لـ `admin` فقط)
+* **المدخلات المطلوبة:**
+```json
+{
+  "name": "محافظة غزة والشمال"
+}
+```
+
+#### • حذف محافظة (Delete Governorate)
+* **المسار:** `DELETE /api/governorates/:id`
+* **الحماية:** محمي (لـ `admin` فقط)
+
+#### • إنشاء منطقة جديدة (Create Area)
+* **المسار:** `POST /api/areas`
+* **الحماية:** محمي (لـ `admin` فقط)
+* **المدخلات المطلوبة:**
+```json
+{
+  "name": "الرمال",
+  "governorate_id": 1
+}
+```
+
+#### • جلب قائمة المناطق (Get All Areas)
+* **المسار:** `GET /api/areas`
+* **الحماية:** محمي (لأي مستخدم مسجل دخول)
+
+#### • جلب منطقة بالـ ID
+* **المسار:** `GET /api/areas/:id`
+* **الحماية:** محمي (لأي مستخدم مسجل دخول)
+
+#### • تعديل منطقة (Update Area)
+* **المسار:** `PUT /api/areas/:id`
+* **الحماية:** محمي (لـ `admin` فقط)
+* **المدخلات المطلوبة:**
+```json
+{
+  "name": "الرمال الشمالي",
+  "governorate_id": 1
+}
+```
+
+#### • حذف منطقة (Delete Area)
+* **المسار:** `DELETE /api/areas/:id`
+* **الحماية:** محمي (لـ `admin` فقط)
 
 ---
 
