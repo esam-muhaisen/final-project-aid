@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const donationsRepository = require('./donations.repository');
-const audit = require('../../shared/audit');
+const { logDonationAudit } = require('../../shared/audit');
 
 const generateTrackingCode = () => {
   return 'DON-' + crypto.randomBytes(6).toString('hex').toUpperCase();
@@ -9,7 +9,8 @@ const generateTrackingCode = () => {
 const create = async (data) => {
   data.tracking_code = generateTrackingCode();
   const donation = await donationsRepository.create(data);
-  await audit.log('create_donation', 'donations', donation.id);
+  await logDonationAudit(data.user_id, donation.id, 'create_donation');
+  
   return donation;
 };
 

@@ -123,17 +123,14 @@ model beneficiaries {
 model beneficiary_verifications {
   id                  Int                              @id @default(autoincrement())
   beneficiary_id      Int
-  org_id              Int
   verified_by         Int?
   result              beneficiary_verifications_result
   notes               String?                          @db.Text
   created_at          DateTime                         @default(now()) @db.Timestamp(0)
   beneficiaries       beneficiaries                    @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_verifications_ibfk_1")
-  local_organizations local_organizations              @relation(fields: [org_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_verifications_ibfk_2")
   users               users?                           @relation(fields: [verified_by], references: [id], onUpdate: Restrict, map: "beneficiary_verifications_ibfk_3")
 
   @@index([beneficiary_id], map: "beneficiary_id")
-  @@index([org_id], map: "org_id")
   @@index([verified_by], map: "verified_by")
 }
 
@@ -215,7 +212,7 @@ model donations {
   guest_email       String?             @db.VarChar(150)
   amount            Decimal             @db.Decimal(10, 2)
   currency          String?             @default("ILS") @db.VarChar(10)
-  tracking_code     String              @unique(map: "tracking_code") @db.VarChar(20)
+  tracking_code     String?              @unique(map: "tracking_code") @db.VarChar(20)
   status            donations_status?   @default(pending)
   donated_at        DateTime            @default(now()) @db.Timestamp(0)
   donation_tracking donation_tracking[]
@@ -227,8 +224,6 @@ model donations {
 model donors {
   id        Int         @id @default(autoincrement())
   user_id   Int         @unique(map: "user_id")
-  org_name  String?     @db.VarChar(200)
-  country   String?     @db.VarChar(80)
   donations donations[]
   users     users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "donors_ibfk_1")
 }
@@ -246,7 +241,6 @@ model local_organizations {
   area_id                   Int?
   is_verified               Boolean?                    @default(false)
   aids                      aids[]
-  beneficiary_verifications beneficiary_verifications[]
   distributions             distributions[]
   beneficiary_aids          beneficiary_aids[]
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "local_organizations_ibfk_1")
@@ -267,19 +261,6 @@ model notifications {
   @@index([user_id], map: "user_id")
 }
 
-model sync_logs {
-  id             Int                    @id @default(autoincrement())
-  user_id        Int?
-  operation_type String                 @db.VarChar(50)
-  table_name     String                 @db.VarChar(100)
-  record_id      Int?
-  sync_status    sync_logs_sync_status? @default(pending)
-  created_at     DateTime               @default(now()) @db.Timestamp(0)
-  synced_at      DateTime?              @db.Timestamp(0)
-  users          users?                 @relation(fields: [user_id], references: [id], onUpdate: Restrict, map: "sync_logs_ibfk_1")
-
-  @@index([user_id], map: "user_id")
-}
 
 model users {
   id                        Int                         @id @default(autoincrement())
@@ -297,7 +278,6 @@ model users {
   donors                    donors?
   local_organizations       local_organizations?
   notifications             notifications[]
-  sync_logs                 sync_logs[]
 }
 
 enum beneficiary_verifications_result {
@@ -325,11 +305,6 @@ enum distribution_cycles_status {
   cancelled
 }
 
-enum sync_logs_sync_status {
-  pending
-  synced
-  failed
-}
 
 enum aids_status {
   active
@@ -371,7 +346,7 @@ model beneficiary_aids {
   beneficiary_id     Int
   aid_type_id        Int
   pickup_location_id Int?
-  org_id             Int
+  org_id             Int?
   order_id           Int?                     @unique(map: "beneficiary_aids_order_id_unique")
   status             beneficiary_aids_status
   created_at         DateTime                 @default(now()) @db.Timestamp(0)
@@ -380,7 +355,7 @@ model beneficiary_aids {
   beneficiaries       beneficiaries       @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "beneficiary_aids_ibfk_1")
   aid_types           aid_types           @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_2")
   pickup_locations    pickup_locations?   @relation(fields: [pickup_location_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_3")
-  local_organizations local_organizations @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_4")
+  local_organizations local_organizations? @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "beneficiary_aids_ibfk_4")
   beneficiary_orders  beneficiary_orders? @relation(fields: [order_id], references: [id], onDelete: SetNull, onUpdate: Restrict, map: "beneficiary_aids_ibfk_5")
 
   @@index([beneficiary_id], map: "beneficiary_id")

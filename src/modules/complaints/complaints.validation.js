@@ -14,5 +14,5 @@ const resolveComplaintSchema = z.object({
     status: z.enum(['under_review', 'resolved']).default('resolved'),
   }),
 });
-
+  
 module.exports = { createComplaintSchema, resolveComplaintSchema };
