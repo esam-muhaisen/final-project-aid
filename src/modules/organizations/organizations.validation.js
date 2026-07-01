@@ -8,6 +8,8 @@ const createOrgSchema = z.object({
     phone: z.string().max(20).optional().nullable(),
     org_name: z.string().min(2).max(200),
     area_id: z.coerce.number().optional().nullable(),
+    focus_area: z.string().max(200).optional().nullable(),
+    staff_count: z.coerce.number().int().min(0).optional().nullable(),
   }),
 });
 
@@ -19,6 +21,8 @@ const updateOrgSchema = z.object({
     phone: z.string().max(20).optional().nullable(),
     org_name: z.string().min(2).max(200).optional(),
     area_id: z.coerce.number().optional().nullable(),
+    focus_area: z.string().max(200).optional().nullable(),
+    staff_count: z.coerce.number().int().min(0).optional().nullable(),
   }),
 });
 

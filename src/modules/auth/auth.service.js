@@ -41,10 +41,15 @@ const login = async (email, password) => {
   await authRepository.addRefreshToken(refreshToken);
   await logAuditAction(user.id, "Login", "users", user.id);
 
-    // Build extras based on user role
+  // Build extras based on user role
   const extras = {};
   if (user.role === "beneficiary") {
     extras.beneficiary = await beneficiariesRepository.findByUserId(user.id);
+    if (extras.beneficiary && extras.beneficiary.status === "not_eligible") {
+      const error = new Error("Your account has been rejected. You are not eligible to access the system.");
+      error.status = 403;
+      throw error;
+    }
   } else if (user.role === "local_org") {
     extras.organization = await organizationsRepository.findByUserId(user.id);
   }
@@ -126,6 +131,12 @@ const loginBeneficiary = async (nationalId, releaseDate) => {
   if (!beneficiary) {
     const error = new Error("Invalid credentials");
     error.status = 401;
+    throw error;
+  }
+
+  if (beneficiary.status === "not_eligible") {
+    const error = new Error("Your account has been rejected. You are not eligible to access the system.");
+    error.status = 403;
     throw error;
   }
 

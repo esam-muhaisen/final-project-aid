@@ -25,6 +25,8 @@ const create = async (data, actorId) => {
   const orgData = {
     org_name: data.org_name,
     area_id: data.area_id,
+    focus_area: data.focus_area,
+    staff_count: data.staff_count,
     is_verified: false,
   };
 
@@ -70,6 +72,8 @@ const update = async (id, data, actorId) => {
   const orgData = {};
   if (data.org_name !== undefined) orgData.org_name = data.org_name;
   if (data.area_id !== undefined) orgData.area_id = data.area_id;
+  if (data.focus_area !== undefined) orgData.focus_area = data.focus_area;
+  if (data.staff_count !== undefined) orgData.staff_count = data.staff_count;
 
   const updated = await orgsRepository.update(id, userData, orgData);
   await logAuditAction(actorId, "Organization Update", "local_organizations", updated.id);

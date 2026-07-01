@@ -76,6 +76,8 @@ CREATE TABLE local_organizations (
     org_name    VARCHAR(200) NOT NULL,
     area_id     INT,
     is_verified BOOLEAN DEFAULT FALSE,
+    focus_area  VARCHAR(200),
+    staff_count INT DEFAULT 0,
     FOREIGN KEY (user_id)  REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (area_id)  REFERENCES areas(id) ON DELETE SET NULL
 );

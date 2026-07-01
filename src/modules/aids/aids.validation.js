@@ -22,7 +22,14 @@ const updateAidSchema = z.object({
   }),
 });
 
+const deductAidSchema = z.object({
+  body: z.object({
+    quantity: z.coerce.number().int().min(1),
+  }),
+});
+
 module.exports = {
   createAidSchema,
   updateAidSchema,
+  deductAidSchema,
 };

@@ -7,6 +7,15 @@ const generateTrackingCode = () => {
 };
 
 const create = async (data) => {
+  if (data.donor_id) {
+    const existing = await donationsRepository.findByDonorId(data.donor_id);
+    if (existing) {
+      const updated = await donationsRepository.incrementAmount(existing.id, data.amount);
+      await logDonationAudit(data.user_id, updated.id, 'increment_donation_amount');
+      return updated;
+    }
+  }
+
   data.tracking_code = generateTrackingCode();
   const donation = await donationsRepository.create(data);
   await logDonationAudit(data.user_id, donation.id, 'create_donation');

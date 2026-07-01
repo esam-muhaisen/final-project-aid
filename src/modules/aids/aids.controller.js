@@ -46,4 +46,14 @@ const remove = async (req, res, next) => {
   }
 };
 
-module.exports = { create, findAll, findById, update, remove };
+const deduct = async (req, res, next) => {
+  try {
+    const { quantity } = req.body;
+    const updated = await aidsService.deduct(req.params.id, quantity);
+    res.json(formatAidResponse(updated));
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { create, findAll, findById, update, remove, deduct };

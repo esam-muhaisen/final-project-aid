@@ -14,6 +14,14 @@ const create = async (data) => {
     }
   }
 
+  // Check if an active aid of this type and org already exists
+  const existingAid = await aidsRepository.findByTypeAndOrg(data.aid_type_id, data.org_id);
+  
+  if (existingAid) {
+    // Upsert: increment quantity instead of creating a new row
+    return aidsRepository.incrementQuantity(existingAid.id, data.quantity);
+  }
+
   let batchCode = data.batch_code;
   if (!batchCode) {
     batchCode = `BATCH-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -92,10 +100,21 @@ const deleteAid = async (id) => {
   return aidsRepository.deleteAid(id);
 };
 
+const deduct = async (id, quantity) => {
+  const aid = await findById(id);
+  if (aid.remaining_quantity < quantity) {
+    const error = new Error("Insufficient remaining quantity");
+    error.status = 400;
+    throw error;
+  }
+  return aidsRepository.deductQuantity(id, quantity);
+};
+
 module.exports = {
   create,
   findAll,
   findById,
   update,
   deleteAid,
+  deduct,
 };
