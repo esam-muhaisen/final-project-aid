@@ -7,7 +7,7 @@ const { createBeneficiarySchema, updateBeneficiarySchema } = require("./benefici
 
 const router = express.Router();
 
-router.post("/", authenticate, authorize(["admin"]), validate(createBeneficiarySchema), beneficiariesController.create);
+router.post("/", authenticate, authorize(["admin", "local_org"]), validate(createBeneficiarySchema), beneficiariesController.create);
 router.get("/", authenticate, authorize(["admin", "local_org"]), beneficiariesController.findAll);
 router.get("/:id", authenticate, authorize(["admin", "local_org", "beneficiary"]), beneficiariesController.findById);
 router.put("/:id", authenticate, authorize(["admin", "local_org", "beneficiary"]), validate(updateBeneficiarySchema), beneficiariesController.update);
