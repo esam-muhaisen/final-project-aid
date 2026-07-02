@@ -30,21 +30,17 @@ model aid_types {
 model aids {
   id                  Int                  @id @default(autoincrement())
   aid_type_id         Int
-  donor_id            Int?
   org_id              Int?
   quantity            Int
   remaining_quantity  Int
-  expiry_date         DateTime?            @db.Date
   status              aids_status?         @default(active)
   batch_code          String?              @unique(map: "batch_code") @db.VarChar(50)
   created_at          DateTime             @default(now()) @db.Timestamp(0)
   aid_types           aid_types            @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "aids_ibfk_1")
-  donors              donors?              @relation(fields: [donor_id], references: [id], onUpdate: Restrict, map: "aids_ibfk_3")
   local_organizations local_organizations? @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "aids_ibfk_2")
   distributions       distributions[]
 
   @@index([aid_type_id], map: "aid_type_id")
-  @@index([donor_id], map: "donor_id")
   @@index([org_id], map: "org_id")
 }
 
@@ -230,7 +226,6 @@ model donors {
   id        Int         @id @default(autoincrement())
   user_id   Int         @unique(map: "user_id")
   donations donations[]
-  aids      aids[]
   users     users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "donors_ibfk_1")
 }
 
