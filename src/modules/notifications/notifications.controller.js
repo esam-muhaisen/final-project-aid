@@ -1,5 +1,5 @@
 const notificationsService = require('./notifications.service');
-const { formatNotificationResponse, formatNotificationListResponse } = require('./notifications.dto');
+const { formatNotificationResponse, formatPaginatedResponse } = require('./notifications.dto');
 
 const create = async (req, res, next) => {
   try {
@@ -12,17 +12,16 @@ const create = async (req, res, next) => {
 
 const findAll = async (req, res, next) => {
   try {
-    const list = await notificationsService.findAll();
-    res.json(formatNotificationListResponse(list));
-  } catch (err) {
-    next(err);
-  }
-};
-
-const findMyNotifications = async (req, res, next) => {
-  try {
-    const list = await notificationsService.findByUserId(req.user.id);
-    res.json(formatNotificationListResponse(list));
+    const { page, limit, is_read, user_id } = req.query;
+    const result = await notificationsService.findAll({
+      page: Number(page),
+      limit: Number(limit),
+      is_read,
+      user_id,
+      currentUserId: req.user.id,
+      userRole: req.user.role,
+    });
+    res.json(formatPaginatedResponse(result.list, result.total, result.page, result.limit));
   } catch (err) {
     next(err);
   }
@@ -31,7 +30,6 @@ const findMyNotifications = async (req, res, next) => {
 const findById = async (req, res, next) => {
   try {
     const notification = await notificationsService.findById(req.params.id);
-    // Secure it so user can only see their own notifications unless admin
     if (req.user.role !== 'admin' && notification.user_id !== req.user.id) {
       const err = new Error('Access denied');
       err.status = 403;
@@ -70,4 +68,4 @@ const remove = async (req, res, next) => {
   }
 };
 
-module.exports = { create, findAll, findMyNotifications, findById, update, markAsRead, remove };
+module.exports = { create, findAll, findById, update, markAsRead, remove };
