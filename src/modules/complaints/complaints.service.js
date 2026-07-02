@@ -1,6 +1,6 @@
 const complaintsRepository = require('./complaints.repository');
 const beneficiariesRepository = require('../beneficiaries/beneficiaries.repository');
-const audit = require('../../shared/audit');
+// const audit = require('../../shared/audit');
 
 const create = async (data) => {
   const beneficiary = await beneficiariesRepository.findById(data.beneficiary_id);
@@ -10,7 +10,7 @@ const create = async (data) => {
     throw err;
   }
   const complaint = await complaintsRepository.create(data);
-  await audit.log('create_complaint', 'complaints', complaint.id);
+  // await audit.log('create_complaint', 'complaints', complaint.id);
   return complaint;
 };
 
@@ -39,7 +39,7 @@ const resolveComplaint = async (id, data, adminUserId) => {
     resolved_by: adminUserId
   };
   const complaint = await complaintsRepository.update(id, payload);
-  await audit.log('resolve_complaint', 'complaints', complaint.id);
+  // await audit.log('resolve_complaint', 'complaints', complaint.id);
   return complaint;
 };
 

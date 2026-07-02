@@ -5,7 +5,6 @@ const createAidSchema = z.object({
     aid_type_id: z.coerce.number().int(),
     org_id: z.coerce.number().int().optional().nullable(),
     quantity: z.coerce.number().int().min(1),
-    expiry_date: z.string().datetime().or(z.string().date()).optional().nullable(),
     batch_code: z.string().max(50).optional().nullable(),
   }),
 });
@@ -16,7 +15,6 @@ const updateAidSchema = z.object({
     org_id: z.coerce.number().int().optional().nullable(),
     quantity: z.coerce.number().int().min(1).optional(),
     remaining_quantity: z.coerce.number().int().min(0).optional(),
-    expiry_date: z.string().datetime().or(z.string().date()).optional().nullable(),
     status: z.enum(["active", "exhausted", "expired"]).optional(),
     batch_code: z.string().max(50).optional().nullable(),
   }),

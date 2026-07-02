@@ -41,9 +41,6 @@ const create = async (data) => {
     status: "active",
   };
 
-  if (data.expiry_date) {
-    aidData.expiry_date = new Date(data.expiry_date);
-  }
 
   return aidsRepository.create(aidData);
 };
@@ -88,9 +85,6 @@ const update = async (id, data) => {
   }
 
   const updateData = { ...data };
-  if (data.expiry_date) {
-    updateData.expiry_date = new Date(data.expiry_date);
-  }
 
   return aidsRepository.update(id, updateData);
 };
