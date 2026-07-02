@@ -281,6 +281,7 @@ model users {
   local_organizations       local_organizations?
   notifications             notifications[]
   beneficiary_aids          beneficiary_aids[]
+  sync_logs                 sync_logs[]
 }
 
 enum beneficiary_verifications_result {
@@ -364,6 +365,26 @@ model beneficiary_aids {
   @@index([aid_type_id], map: "aid_type_id")
   @@index([pickup_location_id], map: "pickup_location_id")
   @@index([verify_by_user_id], map: "user_id")
+}
+
+enum sync_logs_sync_status {
+  pending
+  synced
+  failed
+}
+
+model sync_logs {
+  id             Int                   @id @default(autoincrement())
+  user_id        Int?
+  operation_type String                @db.VarChar(50)
+  table_name     String                @db.VarChar(100)
+  record_id      Int?
+  sync_status    sync_logs_sync_status @default(pending)
+  created_at     DateTime              @default(now()) @db.Timestamp(0)
+  synced_at      DateTime?             @db.Timestamp(0)
+  users          users?                @relation(fields: [user_id], references: [id], onDelete: SetNull, map: "sync_logs_ibfk_1")
+
+  @@index([user_id], map: "user_id")
 }
 
 enum beneficiary_aids_status {

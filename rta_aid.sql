@@ -37,7 +37,17 @@ CREATE TABLE areas (
 );
 
 -- =====================================================
--- الجدول 4: beneficiaries — المستفيدون
+-- الجدول 4: pickup_locations — نقاط الاستلام
+-- =====================================================
+CREATE TABLE pickup_locations (
+    id      INT AUTO_INCREMENT PRIMARY KEY,
+    area_id INT NOT NULL,
+    name    VARCHAR(200) NOT NULL,
+    FOREIGN KEY (area_id) REFERENCES areas(id) ON UPDATE RESTRICT
+);
+
+-- =====================================================
+-- الجدول 5: beneficiaries — المستفيدون
 -- =====================================================
 CREATE TABLE beneficiaries (
     id             INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,6 +60,7 @@ CREATE TABLE beneficiaries (
     disabled_count INT DEFAULT 0,
     is_displaced   BOOLEAN DEFAULT FALSE,
     priority_score DECIMAL(8,2) DEFAULT 0,
+    release_date   DATE NOT NULL,
     status         ENUM('pending','eligible','not_eligible') DEFAULT 'pending',
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id)  REFERENCES users(id) ON DELETE CASCADE,
@@ -62,8 +73,6 @@ CREATE TABLE beneficiaries (
 CREATE TABLE donors (
     id       INT AUTO_INCREMENT PRIMARY KEY,
     user_id  INT NOT NULL UNIQUE,
-    org_name VARCHAR(200),
-    country  VARCHAR(80),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -123,16 +132,13 @@ CREATE TABLE campaigns (
 CREATE TABLE aids (
     id                 INT AUTO_INCREMENT PRIMARY KEY,
     aid_type_id        INT NOT NULL,
-    donor_id           INT,
     org_id             INT,
     quantity           INT NOT NULL,
     remaining_quantity INT NOT NULL,
-    expiry_date        DATE,
     status             ENUM('active','exhausted','expired') DEFAULT 'active',
-    batch_code         VARCHAR(50) UNIQUE, -- تم دمج العمود المعدل هنا مباشرة
+    batch_code         VARCHAR(50) UNIQUE,
     created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (aid_type_id) REFERENCES aid_types(id),
-    FOREIGN KEY (donor_id)    REFERENCES donors(id) ON DELETE SET NULL,
     FOREIGN KEY (org_id)      REFERENCES local_organizations(id) ON DELETE SET NULL
 );
 
@@ -160,7 +166,7 @@ CREATE TABLE distributions (
     cycle_id       INT NULL, -- تم دمج العمود المعدل هنا مباشرة لربطه بالدورة
     quantity_given INT NOT NULL,
     status         ENUM('pending','delivered','cancelled') DEFAULT 'pending',
-    delivered_at   TIMESTAMP,
+    delivered_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (aid_id)         REFERENCES aids(id) ON DELETE CASCADE,
     FOREIGN KEY (beneficiary_id) REFERENCES beneficiaries(id) ON DELETE CASCADE,
@@ -351,19 +357,8 @@ INSERT INTO pickup_locations (area_id, name) VALUES
   (15, 'مخيم تل السلطان - نقطة الاستلام الرئيسية');
 
 
-  -- =====================================================
--- الجدول 20: pickup_locations — نقاط الاستلام
 -- =====================================================
-CREATE TABLE IF NOT EXISTS pickup_locations (
-    id      INT AUTO_INCREMENT PRIMARY KEY,
-    area_id INT NOT NULL,
-    name    VARCHAR(200) NOT NULL,
-    FOREIGN KEY (area_id) REFERENCES areas(id) ON UPDATE RESTRICT,
-    INDEX (area_id)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- =====================================================
--- الجدول 21: beneficiary_orders — طلبات المستفيدين
+-- الجدول 20: beneficiary_orders — طلبات المستفيدين
 -- =====================================================
 CREATE TABLE IF NOT EXISTS beneficiary_orders (
     id             INT AUTO_INCREMENT PRIMARY KEY,
@@ -386,7 +381,7 @@ CREATE TABLE IF NOT EXISTS beneficiary_aids (
     beneficiary_id     INT NOT NULL,
     aid_type_id        INT NOT NULL,
     pickup_location_id INT NULL,
-    org_id             INT NOT NULL,
+    verify_by_user_id  INT NOT NULL,
     order_id           INT NULL UNIQUE,
     status             ENUM('rejected', 'approved', 'preparing', 'shipping', 'delivered') NOT NULL,
     created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -394,11 +389,11 @@ CREATE TABLE IF NOT EXISTS beneficiary_aids (
     FOREIGN KEY (beneficiary_id) REFERENCES beneficiaries(id) ON DELETE CASCADE,
     FOREIGN KEY (aid_type_id) REFERENCES aid_types(id) ON UPDATE RESTRICT,
     FOREIGN KEY (pickup_location_id) REFERENCES pickup_locations(id) ON UPDATE RESTRICT,
-    FOREIGN KEY (org_id) REFERENCES local_organizations(id) ON UPDATE RESTRICT,
+    FOREIGN KEY (verify_by_user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (order_id) REFERENCES beneficiary_orders(id) ON DELETE SET NULL,
     INDEX (beneficiary_id),
     INDEX (aid_type_id),
     INDEX (pickup_location_id),
-    INDEX (org_id),
+    INDEX (verify_by_user_id),
     INDEX (order_id)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
