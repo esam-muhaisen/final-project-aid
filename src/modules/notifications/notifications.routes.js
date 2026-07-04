@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/', authenticate, validate(createNotificationSchema), notificationsController.create);
 router.get('/', authenticate, validate(notificationQuerySchema), notificationsController.findAll);
 router.get('/:id', authenticate, notificationsController.findById);
-router.put('/:id', authenticate, authorize(['admin']), validate(updateNotificationSchema), notificationsController.update);
+router.put('/:id', authenticate, authorize(['admin', 'local_org']), validate(updateNotificationSchema), notificationsController.update);
 router.patch('/:id/read', authenticate, notificationsController.markAsRead);
 router.delete('/:id', authenticate, authorize(['admin']), notificationsController.remove);
 
