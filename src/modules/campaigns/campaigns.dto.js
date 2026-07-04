@@ -1,5 +1,8 @@
 const formatCampaignResponse = (campaign) => {
-  return campaign;
+  return {
+    ...campaign,
+    target_amount: campaign.target_amount ?? 'unlimited',
+  };
 };
 
 const formatCampaignListResponse = (campaigns) => {
