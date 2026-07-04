@@ -10,7 +10,7 @@ const router = express.Router();
 router.post('/', authenticate, authorize(['admin', 'local_org']), validate(createCampaignSchema), campaignsController.create);
 router.get('/', campaignsController.findAll);
 router.get('/:id', campaignsController.findById);
-router.put('/:id', authenticate, authorize(['admin', 'local_org']), validate(updateCampaignSchema), campaignsController.update);
+router.put('/:id', validate(updateCampaignSchema), campaignsController.update);
 router.delete('/:id', authenticate, authorize(['admin', 'local_org']), campaignsController.remove);
 
 module.exports = router;

@@ -18,7 +18,7 @@ const create = async (data) => {
 
   data.tracking_code = generateTrackingCode();
   const donation = await donationsRepository.create(data);
-  await logDonationAudit(data.user_id, donation.id, 'create_donation');
+  // await logDonationAudit(data.user_id, donation.id, 'create_donation');
   
   return donation;
 };
