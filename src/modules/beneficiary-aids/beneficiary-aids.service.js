@@ -1,3 +1,4 @@
+const prisma = require("../../config/db");
 const repository = require("./beneficiary-aids.repository");
 const organizationsRepository = require("../organizations/organizations.repository");
 const beneficiariesRepository = require("../beneficiaries/beneficiaries.repository");
@@ -111,9 +112,56 @@ const remove = async (id, user) => {
   return repository.remove(id);
 };
 
+const create = async (data, user) => {
+  if (user.role === "local_org") {
+    const org = await organizationsRepository.findByUserId(user.id);
+    if (!org) {
+      const error = new Error("Local organization record not found");
+      error.status = 404;
+      throw error;
+    }
+  }
+
+  const beneficiary = await beneficiariesRepository.findById(data.beneficiary_id);
+  if (!beneficiary) {
+    const error = new Error("Beneficiary not found");
+    error.status = 404;
+    throw error;
+  }
+
+  const aidType = await prisma.aid_types.findUnique({
+    where: { id: data.aid_type_id },
+  });
+  if (!aidType) {
+    const error = new Error("Aid type not found");
+    error.status = 404;
+    throw error;
+  }
+
+  if (data.pickup_location_id) {
+    await pickupLocationsService.findById(data.pickup_location_id);
+  }
+
+  console.log('==================================');
+  console.log(`========== Data ${data} ===========`);
+  console.log('==================================');
+
+  const createData = {
+    beneficiary_id: data.beneficiary_id,
+    aid_type_id: data.aid_type_id,
+    pickup_location_id: data.pickup_location_id ?? null,
+    verify_by_user_id: user.id,
+    status: data.status,
+    order_id: data.id
+  };
+
+  return repository.create(createData);
+};
+
 module.exports = {
   findAll,
   findById,
+  create,
   update,
   remove,
 };

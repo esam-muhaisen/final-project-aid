@@ -37,9 +37,19 @@ const remove = async (req, res, next) => {
   }
 };
 
+const create = async (req, res, next) => {
+  try {
+    const aid = await service.create(req.body, req.user);
+    res.status(201).json(formatBeneficiaryAidResponse(aid));
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   findAll,
   findById,
+  create,
   update,
   remove,
 };

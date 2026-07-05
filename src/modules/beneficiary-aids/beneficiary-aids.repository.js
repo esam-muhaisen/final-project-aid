@@ -1,7 +1,8 @@
 const prisma = require("../../config/db");
 
-const findAll = async () => {
+const findAll = async (where = {}) => {
   return prisma.beneficiary_aids.findMany({
+    where,
     include: {
       beneficiaries: { include: { users: true } },
       aid_types: true,
@@ -46,9 +47,23 @@ const remove = async (id) => {
   });
 };
 
+const create = async (data) => {
+  return prisma.beneficiary_aids.create({
+    data,
+    include: {
+      beneficiaries: { include: { users: true } },
+      aid_types: true,
+      pickup_locations: true,
+      users: true,
+      beneficiary_orders: true,
+    },
+  });
+};
+
 module.exports = {
   findAll,
   findById,
+  create,
   update,
   remove,
 };

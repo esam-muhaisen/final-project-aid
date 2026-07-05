@@ -3,9 +3,17 @@ const controller = require("./beneficiary-aids.controller");
 const authenticate = require("../../middleware/auth.middleware");
 const authorize = require("../../middleware/role.middleware");
 const validate = require("../../middleware/validation.middleware");
-const { updateBeneficiaryAidSchema } = require("./beneficiary-aids.validation");
+const { createBeneficiaryAidSchema, updateBeneficiaryAidSchema } = require("./beneficiary-aids.validation");
 
 const router = express.Router();
+
+router.post(
+  "/",
+  authenticate,
+  authorize(["admin", "local_org"]),
+  validate(createBeneficiaryAidSchema),
+  controller.create
+);
 
 router.get(
   "/",

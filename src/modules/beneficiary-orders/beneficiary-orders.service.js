@@ -27,17 +27,13 @@ const  findById = async (id) => {
   return order;
 };
 
-const usersRepository = require("../users/users.repository");
 const pickupLocationsService = require("../pickup-locations/pickup-locations.service");
 
-const update = async (id, data, actor) => {
+const update = async (id, data) => {
   const order = await findById(id);
   if (data.aid_type_id) {
     await aidTypesService.findById(data.aid_type_id);
   }
-
-  let uesrId = null;
-  let pickupLocationId = null;
 
   if (data.status !== undefined && data.status !== order.status) {
     if (order.status !== "pending") {
@@ -46,35 +42,18 @@ const update = async (id, data, actor) => {
       throw error;
     }
 
-    if (data.status === "approved" || data.status === "rejected") {
-      // if (!actor || actor.role !== "local_org") {
-      //   const error = new Error("Access denied: Only local organizations can update order status");
-      //   error.status = 403;
-      //   throw error;
-      // }
-
-      const user = await usersRepository.findById(actor.id);
-      if (!user) {
-        const error = new Error("org or admin profile not found for this user");
-        error.status = 404;
-        throw error;
-      }
-      uesrId = user.id;
-
-      if (data.status === "approved") {
-        if (!data.pickup_location_id) {
-          const error = new Error("pickup_location_id is required when approving an order");
-          error.status = 400;
-          throw error;
-        }
-        await pickupLocationsService.findById(data.pickup_location_id);
-        pickupLocationId = data.pickup_location_id;
-      }
-    }
+    // if (data.status === "approved" && !data.pickup_location_id) {
+    //   const error = new Error("pickup_location_id is required when approving an order");
+    //   error.status = 400;
+    //   throw error;
+    // }
   }
 
-  const { pickup_location_id, ...orderData } = data;
-  return beneficiaryOrdersRepository.update(id, orderData, uesrId, pickupLocationId);
+  if (data.pickup_location_id) {
+    await pickupLocationsService.findById(data.pickup_location_id);
+  }
+
+  return beneficiaryOrdersRepository.update(id, data);
 };
 
 const deleteOrder = async (id) => {
