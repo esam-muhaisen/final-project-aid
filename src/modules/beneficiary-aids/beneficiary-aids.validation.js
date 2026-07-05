@@ -5,6 +5,8 @@ const createBeneficiaryAidSchema = z.object({
     beneficiary_id: z.number().int().positive(),
     aid_type_id: z.number().int().positive(),
     pickup_location_id: z.number().int().positive().optional().nullable(),
+    status: z.enum(["rejected", "approved", "preparing", "shipping", "delivered"]).optional(),
+    order_id: z.number().int().positive().optional().nullable(),
   }),
 });
 

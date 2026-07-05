@@ -60,29 +60,11 @@ const findById = async (id, user) => {
       throw error;
     }
   } 
-  // else if (user.role === "local_org") {
-  //   const org = await organizationsRepository.findByUserId(user.id);
-  //   if (!org || aid.org_id !== org.id) {
-  //     const error = new Error("Access denied 2");
-  //     error.status = 403;
-  //     throw error;
-  //   }
-  // } 
-  // else if (user.role !== "admin") {
-  //   const error = new Error("Access denied 3");
-  //   error.status = 403;
-  //   throw error;
-  // }
 
   return aid;
 };
 
 const update = async (id, data, user) => {
-  // if (user.role !== "local_org") {
-  //   const error = new Error("Access denied: Only local organizations can update beneficiary aids");
-  //   error.status = 403;
-  //   throw error;
-  // }
 
   const aid = await findById(id, user);
 
@@ -142,17 +124,13 @@ const create = async (data, user) => {
     await pickupLocationsService.findById(data.pickup_location_id);
   }
 
-  console.log('==================================');
-  console.log(`========== Data ${data} ===========`);
-  console.log('==================================');
-
   const createData = {
     beneficiary_id: data.beneficiary_id,
     aid_type_id: data.aid_type_id,
     pickup_location_id: data.pickup_location_id ?? null,
     verify_by_user_id: user.id,
     status: data.status,
-    order_id: data.id
+    order_id: data.order_id ?? null
   };
 
   return repository.create(createData);
