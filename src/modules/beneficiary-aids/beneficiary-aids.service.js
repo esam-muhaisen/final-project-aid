@@ -15,15 +15,15 @@ const findAll = async (user, queryFilters = {}) => {
       throw error;
     }
     where.beneficiary_id = beneficiary.id;
-  } else if (user.role === "local_org") {
-    const org = await organizationsRepository.findByUserId(user.id);
-    if (!org) {
-      const error = new Error("Local organization record not found");
-      error.status = 404;
-      throw error;
-    }
-    where.org_id = org.id;
-  } else if (user.role === "admin") {
+  // } else if (user.role === "local_org") {
+  //   const org = await organizationsRepository.findByUserId(user.id);
+  //   if (!org) {
+  //     const error = new Error("Local organization record not found");
+  //     error.status = 404;
+  //     throw error;
+  //   }
+  //   where.verify_by_user_id = org.user_id;
+  } else if (user.role === "admin" || user.role === "local_org") {
     if (queryFilters.beneficiary_id) {
       where.beneficiary_id = parseInt(queryFilters.beneficiary_id);
     }
