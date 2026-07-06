@@ -46,8 +46,8 @@ const changePassword = async (req, res, next) => {
 
 const loginBeneficiary = async (req, res, next) => {
   try {
-    const { national_id, release_date } = req.body;
-    const result = await authService.loginBeneficiary(national_id, release_date);
+    const { national_id, release_date, password } = req.body;
+    const result = await authService.loginBeneficiary(national_id, release_date, password);
     res.json(formatBeneficiaryLoginResponse(result.user, result.beneficiary, result.accessToken, result.refreshToken));
   } catch (error) {
     next(error);

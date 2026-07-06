@@ -3,7 +3,7 @@ const { z } = require("zod");
 const createUserSchema = z.object({
   body: z.object({
     name: z.string().min(2).max(100),
-    email: z.string().email().max(150).optional().nullable(),
+    email: z.string().email().max(150),
     password: z.string().min(6).max(255),
     role: z.enum(["admin", "donor", "beneficiary", "local_org"]),
     phone: z.string().max(20).optional().nullable(),

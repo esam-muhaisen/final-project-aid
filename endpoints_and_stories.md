@@ -21,6 +21,19 @@
 ```
 *(ملاحظة: إذا كان المستخدم مستفيداً وحالته `not_eligible` فسيتم منعه من تسجيل الدخول)*
 
+#### • تسجيل الدخول للمستفيد (Beneficiary Login)
+* **المسار:** `POST /api/auth/login-beneficiary`
+* **الحماية:** عام (Public)
+* **المدخلات المطلوبة:**
+```json
+{
+  "national_id": "409876543",
+  "release_date": "2026-01-15",
+  "password": "password123"
+}
+```
+*(المستفيد يسجل دخوله عن طريق رقم الهوية + تاريخ الإفراج + كلمة المرور، بدلاً من البريد الإلكتروني)*
+
 #### • تسجيل الخروج (Logout)
 * **المسار:** `POST /api/auth/logout`
 * **الحماية:** عام (Public)
@@ -118,7 +131,7 @@
 ```json
 {
   "name": "ياسر الكحلوت",
-  "email": "yasser.b@example.com",
+  "email": null,
   "password": "password123",
   "phone": "+970599222333",
   "national_id": "401234567",
@@ -130,6 +143,7 @@
   "is_displaced": true
 }
 ```
+*(ملاحظة: المستفيد **لا يحتاج** إلى بريد إلكتروني، حقل `email` يمكن أن يكون `null`. بينما `admin`, `local_org`, `donor` البريد الإلكتروني إلزامي)*
 
 #### • جلب جميع المستفيدين (Get All Beneficiaries)
 * **المسار:** `GET /api/beneficiaries`
@@ -628,7 +642,7 @@
 ```json
 {
   "name": "عبد الله الشنطي",
-  "email": "shanti@beneficiary.org",
+  "email": null,
   "password": "password123",
   "phone": "+970599777888",
   "national_id": "409876543",
@@ -637,9 +651,11 @@
   "income": 100.00,
   "patients_count": 2,
   "disabled_count": 1,
-  "is_displaced": true
+  "is_displaced": true,
+  "release_date": "2026-01-15"
 }
 ```
+*(ملاحظة: المستفيد لا يحتاج لبريد إلكتروني، يتم تسجيل دخوله عبر `national_id` + `release_date` + `password`)*
 
 #### الخطوة 2: زيارة الجمعية المحلية وتوثيق البحث الاجتماعي (Verification)
 تقوم الجمعية المحلية (Local Org) الشريكة بعد زيارة خيمتهم بإرسال تقرير التحقق الميداني:

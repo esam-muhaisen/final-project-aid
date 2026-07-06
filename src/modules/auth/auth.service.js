@@ -120,7 +120,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
   await logAuditAction(userId, "Password Change", "users", userId);
 };
 
-const loginBeneficiary = async (nationalId, releaseDate) => {
+const loginBeneficiary = async (nationalId, releaseDate, password) => {
   const beneficiary = await prisma.beneficiaries.findUnique({
     where: { national_id: nationalId },
     include: {
@@ -151,6 +151,13 @@ const loginBeneficiary = async (nationalId, releaseDate) => {
   const user = beneficiary.users;
   if (!user || !user.is_active) {
     const error = new Error("User inactive or not found");
+    error.status = 401;
+    throw error;
+  }
+
+  const matches = await bcrypt.compare(password, user.password);
+  if (!matches) {
+    const error = new Error("Invalid credentials");
     error.status = 401;
     throw error;
   }

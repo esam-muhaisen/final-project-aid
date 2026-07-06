@@ -24,6 +24,7 @@ const beneficiaryLoginSchema = z.object({
   body: z.object({
     national_id: z.string().min(5).max(20),
     release_date: z.string().datetime().or(z.string().date()),
+    password: z.string().min(6),
   }),
 });
 
