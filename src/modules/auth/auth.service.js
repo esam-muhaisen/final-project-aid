@@ -52,6 +52,11 @@ const login = async (email, password) => {
     }
   } else if (user.role === "local_org") {
     extras.organization = await organizationsRepository.findByUserId(user.id);
+    if (extras.organization && !extras.organization.is_verified) {
+      const error = new Error("Your organization account has not been verified yet. Please contact the admin.");
+      error.status = 403;
+      throw error;
+    }
   }
 
   return { user, ...extras, accessToken, refreshToken };
