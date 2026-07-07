@@ -163,38 +163,14 @@ model complaints {
   @@index([resolved_by], map: "resolved_by")
 }
 
-model donation_tracking {
-  id          Int       @id @default(autoincrement())
-  donation_id Int
-  status      String    @db.VarChar(100)
-  description String?   @db.Text
-  created_at  DateTime  @default(now()) @db.Timestamp(0)
-  donations   donations @relation(fields: [donation_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "donation_tracking_ibfk_1")
-
-  @@index([donation_id], map: "donation_id")
-}
-
 model donations {
-  id                Int                 @id @default(autoincrement())
-  donor_id          Int?
-  guest_name        String?             @db.VarChar(100)
-  guest_email       String?             @db.VarChar(150)
-  amount            Decimal             @db.Decimal(10, 2)
-  currency          String?             @default("ILS") @db.VarChar(10)
-  tracking_code     String?             @unique(map: "tracking_code") @db.VarChar(20)
-  status            donations_status?   @default(pending)
-  donated_at        DateTime            @default(now()) @db.Timestamp(0)
-  donation_tracking donation_tracking[]
-  donors            donors?             @relation(fields: [donor_id], references: [id], onUpdate: Restrict, map: "donations_ibfk_1")
-
-  @@index([donor_id], map: "donor_id")
-}
-
-model donors {
-  id        Int         @id @default(autoincrement())
-  user_id   Int         @unique(map: "user_id")
-  donations donations[]
-  users     users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "donors_ibfk_1")
+  id            Int                 @id @default(autoincrement())
+  guest_name    String?             @db.VarChar(100)
+  guest_email   String?             @db.VarChar(150)
+  amount        Decimal             @db.Decimal(10, 2)
+  currency      String?             @default("ILS") @db.VarChar(10)
+  status        donations_status?   @default(completed)
+  donated_at    DateTime            @default(now()) @db.Timestamp(0)
 }
 
 model governorates {
@@ -245,7 +221,6 @@ model users {
   beneficiaries             beneficiaries?
   beneficiary_verifications beneficiary_verifications[]
   complaints                complaints[]
-  donors                    donors?
   local_organizations       local_organizations?
   notifications             notifications[]
   beneficiary_aids          beneficiary_aids[]
@@ -286,7 +261,6 @@ enum complaints_status {
 
 enum users_role {
   admin
-  donor
   beneficiary
   local_org
 }

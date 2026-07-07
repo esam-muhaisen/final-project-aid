@@ -9,7 +9,6 @@ const errorHandler = require("./middleware/error.middleware");
 const authRouter = require("./modules/auth/auth.routes");
 const usersRouter = require("./modules/users/users.routes");
 const beneficiariesRouter = require("./modules/beneficiaries/beneficiaries.routes");
-const donorsRouter = require("./modules/donors/donors.routes");
 const organizationsRouter = require("./modules/organizations/organizations.routes");
 const aidCategoriesRouter = require("./modules/aid-categories/aid-categories.routes");
 const aidTypesRouter = require("./modules/aid-types/aid-types.routes");
@@ -17,7 +16,6 @@ const aidsRouter = require("./modules/aids/aids.routes");
 const campaignsRouter = require("./modules/campaigns/campaigns.routes");
 
 const donationsRouter = require("./modules/donations/donations.routes");
-const donationTrackingRouter = require("./modules/donation-tracking/donation-tracking.routes");
 const beneficiaryVerificationsRouter = require("./modules/beneficiary-verifications/beneficiary-verifications.routes");
 const complaintsRouter = require("./modules/complaints/complaints.routes");
 const notificationsRouter = require("./modules/notifications/notifications.routes");
@@ -50,7 +48,6 @@ app.use(express.json());
 
 
 app.use("/api/donations", donationsRouter);
-app.use("/api/donation-tracking", donationTrackingRouter);
 app.use("/api/beneficiary-verifications", beneficiaryVerificationsRouter);
 app.use("/api/complaints", complaintsRouter);
 app.use("/api/notifications", notificationsRouter);
@@ -64,7 +61,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/beneficiaries", beneficiariesRouter);
 app.use("/api/beneficiary-orders", beneficiaryOrdersRouter);
-app.use("/api/donors", donorsRouter);
 app.use("/api/organizations", organizationsRouter);
 app.use("/api/aid-categories", aidCategoriesRouter);
 app.use("/api/aid-types", aidTypesRouter);
