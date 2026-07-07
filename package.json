@@ -6,6 +6,9 @@
   "scripts": {
     "start": "npx prisma generate && node src/app.js",
     "dev": "nodemon src/app.js",
+    "db:push": "npx prisma db push",
+    "db:seed": "npx prisma db seed",
+    "db:reset": "npx prisma db push --force-reset && npx prisma db seed",
     "prisma:pull": "npx prisma db pull",
     "prisma:generate": "npx prisma generate"
   },
@@ -21,6 +24,9 @@
     "jsonwebtoken": "^9.0.2",
     "winston": "^3.13.0",
     "zod": "^3.23.8"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.0",
