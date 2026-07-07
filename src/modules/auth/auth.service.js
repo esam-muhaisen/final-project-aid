@@ -139,7 +139,7 @@ const loginBeneficiary = async (nationalId, releaseDate, password) => {
     throw error;
   }
 
-  if (beneficiary.status === "not_eligible" || beneficiary.status === "pending") {
+  if (beneficiary.status === "not_eligible") {
     const error = new Error("Your account has been rejected. You are not eligible to access the system.");
     error.status = 403;
     throw error;
