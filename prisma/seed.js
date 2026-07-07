@@ -95,27 +95,6 @@ async function main() {
   });
   console.log('Created 2 campaigns');
 
-  // distribution_cycles
-  await prisma.distribution_cycles.create({
-    data: {
-      name: 'Ramadan 2026',
-      description: 'Food aid distribution during Ramadan',
-      start_date: new Date('2026-03-01'),
-      end_date: new Date('2026-03-31'),
-      status: 'active',
-    },
-  });
-  await prisma.distribution_cycles.create({
-    data: {
-      name: 'Emergency Relief May 2026',
-      description: 'Emergency aid distribution',
-      start_date: new Date('2026-05-01'),
-      end_date: new Date('2026-05-31'),
-      status: 'planned',
-    },
-  });
-  console.log('Created 2 distribution cycles');
-
   // pickup_locations
   const pickupData = [
     { area_id: 1, name: 'مركز توزيع بيت لاهيا الرئيسي' },

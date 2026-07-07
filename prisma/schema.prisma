@@ -38,7 +38,7 @@ model aids {
   created_at          DateTime             @default(now()) @db.Timestamp(0)
   aid_types           aid_types            @relation(fields: [aid_type_id], references: [id], onUpdate: Restrict, map: "aids_ibfk_1")
   local_organizations local_organizations? @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "aids_ibfk_2")
-  distributions       distributions[]
+
 
   @@index([aid_type_id], map: "aid_type_id")
   @@index([org_id], map: "org_id")
@@ -113,7 +113,7 @@ model beneficiaries {
   beneficiary_orders        beneficiary_orders[]
   beneficiary_aids          beneficiary_aids[]
   complaints                complaints[]
-  distributions             distributions[]
+
 
   @@index([area_id], map: "area_id")
 }
@@ -161,38 +161,6 @@ model complaints {
 
   @@index([beneficiary_id], map: "beneficiary_id")
   @@index([resolved_by], map: "resolved_by")
-}
-
-model distribution_cycles {
-  id            Int                         @id @default(autoincrement())
-  name          String                      @db.VarChar(200)
-  description   String?                     @db.Text
-  start_date    DateTime?                   @db.Date
-  end_date      DateTime?                   @db.Date
-  status        distribution_cycles_status? @default(planned)
-  created_at    DateTime                    @default(now()) @db.Timestamp(0)
-  distributions distributions[]
-}
-
-model distributions {
-  id                  Int                   @id @default(autoincrement())
-  aid_id              Int
-  beneficiary_id      Int
-  org_id              Int?
-  cycle_id            Int?
-  quantity_given      Int
-  status              distributions_status? @default(pending)
-  delivered_at        DateTime              @default(now()) @db.Timestamp(0)
-  created_at          DateTime              @default(now()) @db.Timestamp(0)
-  aids                aids                  @relation(fields: [aid_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "distributions_ibfk_1")
-  beneficiaries       beneficiaries         @relation(fields: [beneficiary_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "distributions_ibfk_2")
-  local_organizations local_organizations?  @relation(fields: [org_id], references: [id], onUpdate: Restrict, map: "distributions_ibfk_3")
-  distribution_cycles distribution_cycles?  @relation(fields: [cycle_id], references: [id], onUpdate: Restrict, map: "distributions_ibfk_4")
-
-  @@index([aid_id], map: "aid_id")
-  @@index([beneficiary_id], map: "beneficiary_id")
-  @@index([cycle_id], map: "cycle_id")
-  @@index([org_id], map: "org_id")
 }
 
 model donation_tracking {
@@ -244,7 +212,7 @@ model local_organizations {
   focus_area                String?                     @db.VarChar(200)
   staff_count               Int?                        @default(0)
   aids                      aids[]
-  distributions             distributions[]
+
   beneficiary_verifications beneficiary_verifications[]
   users                     users                       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "local_organizations_ibfk_1")
   areas                     areas?                      @relation(fields: [area_id], references: [id], onUpdate: Restrict, map: "local_organizations_ibfk_2")
@@ -323,23 +291,10 @@ enum users_role {
   local_org
 }
 
-enum distribution_cycles_status {
-  planned
-  active
-  completed
-  cancelled
-}
-
 enum aids_status {
   active
   exhausted
   expired
-}
-
-enum distributions_status {
-  pending
-  delivered
-  cancelled
 }
 
 enum campaigns_status {

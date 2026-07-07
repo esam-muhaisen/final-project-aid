@@ -56,24 +56,10 @@ const deleteBeneficiary = async (req, res, next) => {
   }
 };
 
-const findHistory = async (req, res, next) => {
-  try {
-    const beneficiary = await beneficiariesService.findById(req.params.id);
-    if (req.user.role === "beneficiary" && req.user.id !== beneficiary.user_id) {
-      return res.status(403).json({ error: "Access denied" });
-    }
-    const history = await beneficiariesService.findHistory(req.params.id);
-    res.json(history);
-  } catch (error) {
-    next(error);
-  }
-};
-
 module.exports = {
   create,
   findAll,
   findById,
   update,
   deleteBeneficiary,
-  findHistory,
 };

@@ -15,8 +15,7 @@ const aidCategoriesRouter = require("./modules/aid-categories/aid-categories.rou
 const aidTypesRouter = require("./modules/aid-types/aid-types.routes");
 const aidsRouter = require("./modules/aids/aids.routes");
 const campaignsRouter = require("./modules/campaigns/campaigns.routes");
-const distributionCyclesRouter = require("./modules/distribution-cycles/distribution-cycles.routes");
-const distributionsRouter = require("./modules/distributions/distributions.routes");
+
 const donationsRouter = require("./modules/donations/donations.routes");
 const donationTrackingRouter = require("./modules/donation-tracking/donation-tracking.routes");
 const beneficiaryVerificationsRouter = require("./modules/beneficiary-verifications/beneficiary-verifications.routes");
@@ -50,7 +49,6 @@ app.use(express.json());
 
 
 
-app.use("/api/distributions", distributionsRouter);
 app.use("/api/donations", donationsRouter);
 app.use("/api/donation-tracking", donationTrackingRouter);
 app.use("/api/beneficiary-verifications", beneficiaryVerificationsRouter);
@@ -72,7 +70,6 @@ app.use("/api/aid-categories", aidCategoriesRouter);
 app.use("/api/aid-types", aidTypesRouter);
 app.use("/api/aids", aidsRouter); 
 app.use("/api/campaigns", campaignsRouter);
-app.use("/api/distribution-cycles", distributionCyclesRouter);
 app.use("/api/pickup-locations", pickupLocationsRouter);
 app.use("/api/beneficiary-aids", beneficiaryAidsRouter);
 app.use("/api/governorates", governoratesRouter);

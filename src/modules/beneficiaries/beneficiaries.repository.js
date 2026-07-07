@@ -109,22 +109,6 @@ const deleteBeneficiary = async (id) => {
   }
 };
 
-const findHistory = async (id) => {
-  return prisma.distributions.findMany({
-    where: { beneficiary_id: parseInt(id) },
-    include: {
-      aids: {
-        include: {
-          aid_types: true,
-        },
-      },
-      local_organizations: true,
-      distribution_cycles: true,
-    },
-    orderBy: { created_at: "desc" },
-  });
-};
-
 module.exports = {
   create,
   findAll,
@@ -133,5 +117,4 @@ module.exports = {
   findByNationalId,
   update,
   deleteBeneficiary,
-  findHistory,
 };

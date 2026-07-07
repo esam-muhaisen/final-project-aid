@@ -141,16 +141,10 @@ const deleteBeneficiary = async (id, actorId) => {
   await logAuditAction(actorId, "Beneficiary Deletion", "beneficiaries", parseInt(id));
 };
 
-const findHistory = async (id) => {
-  await findById(id);
-  return beneficiariesRepository.findHistory(id);
-};
-
 module.exports = {
   create,
   findAll,
   findById,
   update,
   deleteBeneficiary,
-  findHistory,
 };
